@@ -178,7 +178,7 @@ EndRep,
     _H,_I,_E,_P,_,
   EndRep,
   _H,_O,_E,_R,_A,_EXCL,_,
-  _H,_A,_R,_T,_E,_L,_Y,_K,_,_G,_E,_F,_E,_L,_I,_C,_I,_T,_E,_E,_R,_D,_,_L,_U,_C,_K,_Y,
+  _H,_A,_R,_T,_E,_L,_Y,_K,_,_G,_E,_F,_E,_L,_I,_C,_I,_T,_E,_E,_R,_D,_,_W,_I,_M,
 */  
   End
 };
