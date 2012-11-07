@@ -1,5 +1,5 @@
 #include "Led20_defs.h" // must be the first line
-//#include "Streaming.h"  // Needed for serial debugging on Arduino
+#include "Streaming.h"  // Needed for serial debugging on Arduino
 
 enum { // this must correspond to the SubroutineList (at the end of the program) line by line, with 'N' prefixes
   NSetColorsDefault,
