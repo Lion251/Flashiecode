@@ -1,6 +1,5 @@
 #include "Led20_defs.h" // must be the first line
-//#include "Streaming.h"  // Needed for serial debugging on Arduino
-
+#include "Streaming.h"  // Needed for serial debugging on Arduino
 
 enum { // this must correspond to the SubroutineList (at the end of the program) line by line, with 'N' prefixes
   NSetColorsDefault,
@@ -127,20 +126,34 @@ Sub(Zigzag) {
 
 Sub(Main) {
   Call(SetColorsDefault),
+  
   FadeOn,
-Repeat(20),
   SetSpeed(0),
-  Repeat(15),
+  Repeat(12),
+    Repeat(5),
+      Call(Stars),
+      SetSpeed(UP),
+    EndRep,
+    Repeat(4),
+      Call(Stars),
+      SetSpeed(DOWN),
+    EndRep,
+  EndRep,
+  
+  Repeat(4),
     Call(Stars),
     SetSpeed(UP),
   EndRep,
   
-  Repeat(15),
+  FadeOff,
+  
+  SetSpeed(5),
+  Repeat(5),
     Call(Stars),
-    SetSpeed(DOWN),
+    SetSpeed(UP),
   EndRep,
-EndRep,
-
+  
+/*
   SetSpeed(29),
   _,_,_PLUS,_,_,_1,_,_, 
   
@@ -174,7 +187,7 @@ EndRep,
     EndRep, 
   EndRep,
   
-/*
+
   Repeat(2),
     _H,_I,_E,_P,_,
   EndRep,

@@ -35,7 +35,7 @@ void Fade(byte b) {
   ddr1  = ddr0;
   ddr0  = (b & 0x1F) | port0;
   for (byte i=0; i<32; i++) {
-    for (byte k=10; k; k--) {
+    for (byte k=18-SpeedVal; k; k--) {
       noInterrupts();
       DDRB  = ddr0;
       PORTB = port0;
@@ -49,10 +49,11 @@ void Fade(byte b) {
       DDRB  = ddr3;
       PORTB = port3;
       for (byte j=33-i; j; j--) nop();
-      PORTB = 0xFF;
+      PORTB = 0xFF;  // We end with all outputs high, all leds off
       interrupts();
     }
   }
+  DDRB  = 0;  // All pins input (so we can read out switches)
 }
 
 
@@ -61,7 +62,7 @@ void PowerOff(void) {
   PORTB  = 0xFF;            // With all pull-ups
   PCMSK  = 0xFF;            // Enable pin change interrupts on all pins
   
-  for (byte i=255; i!=0; i--) { // Wait until all input pins are high 255 times in a row
+  for (byte i=255; i!=0; i--) { // Wait until all input pins are high 255 times in a row (switch has been released)
     if (PINB != 0x1F) i=255;
   }
   
@@ -76,6 +77,11 @@ void PowerOff(void) {
       sleep_cpu();              // Puts the device to sleep
     }
   }
+  
+  for (byte i=255; i!=0; i--) { // Wait until all input pins are high 255 times in a row (switch has been released)
+    if (PINB != 0x1F) i=255;
+  }
+  
 }
 
 byte PROGMEM *RunProgram(byte PROGMEM *pt) {
@@ -88,7 +94,7 @@ byte PROGMEM *RunProgram(byte PROGMEM *pt) {
     Command >>=5;
     switch (Command) {
       case CALL:  // Call subroutine
-        RunProgram((byte PROGMEM *)pgm_read_word(&Subroutines[Param]));
+        if (!RunProgram((byte PROGMEM *)pgm_read_word(&Subroutines[Param]))) return NULL;
         break;
         
       case REPEAT:  // Repeat. Play a frame of ch bytes RepCnt times 
@@ -108,15 +114,20 @@ byte PROGMEM *RunProgram(byte PROGMEM *pt) {
               
             case CHAR:
               { byte ch = pgm_read_byte(pt++);
-                for (byte i=0; i<TEXTDELAY; i++) RunProgram(Charset + 6*ch);
-                RunProgram(Charset + 6*_SPACE);
+                for (byte i=0; i<TEXTDELAY; i++) {
+                  if (!RunProgram(Charset + 6*ch)) return NULL;
+                }
+                if (!RunProgram(Charset + 6*_SPACE)) return NULL;
                 delay(100);
               }
               break;
               
             default: // Normally, we repeat Param times
               { byte PROGMEM *NewPt;
-                do NewPt = RunProgram(pt); while (--Param);
+                do {
+                  NewPt = RunProgram(pt); 
+                  if (!NewPt) return NULL;
+                } while (--Param);
                 pt = NewPt;  // skip the instruction range we just repeated
               }
               break;
@@ -139,9 +150,15 @@ byte PROGMEM *RunProgram(byte PROGMEM *pt) {
         break;
         
       default:  // Commands 0..4 are lighting of a number of LEDs from the same color
-        if (FadeN) Fade((Command<<5) | Param);
-        else
-        { unsigned long Delay;
+        if (FadeN) {
+          Fade((Command<<5) | Param);
+          if (PINB!=0x1F) {
+            byte i;
+            for (i=255; i; i++) if (PINB==0x1f) break;
+            if (!i) return NULL;
+          }
+        } else { 
+          unsigned long Delay;
           byte          Color = Command;
           Delay = (long)((Param==0 ? AVG_ONTIME : ColorVal[Color]) * pgm_read_word(&DelayTime[SpeedVal]))<<2; 
           //Serial<<Color<<" "<<Param<<" "<<SpeedVal<<" "<<Delay<<"\n";
@@ -160,6 +177,8 @@ byte PROGMEM *RunProgram(byte PROGMEM *pt) {
 }
 
 void HandleKeypresses(void) {
+  DDRB  = 0;
+  if (PINB!=0x1F) PowerOff();
 }
 
 void setup(void) {
