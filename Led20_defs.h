@@ -88,7 +88,7 @@
 enum { R,Y,G,B,V,CALL,REPEAT,SPEED };  // For SetColorVal, and commands for the interpreter
 
 #define AVG_ONTIME               20
-#define TEXTDELAY                250
+#define TEXTDELAY                100
 #define SPACEDELAY               1
 #define NOFADE                   28
 #define FADE                     29

@@ -20,7 +20,7 @@ ISR(PCINT0_vect) {  // Pin change interrupt for power on by button
 }
 
 
-byte ddr0,ddr1,ddr2,ddr3,port0,port1,port2,port3;
+byte ddr0,ddr1,ddr2,ddr3,ddr4,ddr5,port0,port1,port2,port3,port4,port5;
 #define nop() __asm__ __volatile__ ("nop")
 
 
@@ -48,6 +48,49 @@ void Fade(byte b) {
       for (byte j=97-i-i; j; j--) nop();
       DDRB  = ddr3;
       PORTB = port3;
+      for (byte j=33-i; j; j--) nop();
+      PORTB = 0xFF;  // We end with all outputs high, all leds off
+      interrupts();
+    }
+  }
+  DDRB  = 0;  // All pins input (so we can read out switches)
+}
+
+
+void Fade2(byte b) {
+  port5 = port4;
+  port4 = port3;
+  port3 = port2;
+  port2 = port1;
+  port1 = port0;
+  port0 = 1;
+  port0 <<= (b>>5);
+  ddr5  = ddr4;
+  ddr4  = ddr3;
+  ddr3  = ddr2;
+  ddr2  = ddr1;
+  ddr1  = ddr0;
+  ddr0  = (b & 0x1F) | port0;
+  for (byte i=0; i<32; i++) {
+    for (byte k=18-SpeedVal; k; k--) {
+      noInterrupts();
+      DDRB  = ddr0;
+      PORTB = port0;
+      for (byte j=i+1; j; j--) nop();
+      DDRB  = ddr1;
+      PORTB = port1;
+      for (byte j=i+i+33; j; j--) nop();
+      DDRB  = ddr2;
+      PORTB = port2;
+      for (byte j=100; j; j--) nop();
+      DDRB  = ddr3;
+      PORTB = port3;
+      for (byte j=100; j; j--) nop();
+      DDRB  = ddr4;
+      PORTB = port4;
+      for (byte j=97-i-i; j; j--) nop();
+      DDRB  = ddr5;
+      PORTB = port5;
       for (byte j=33-i; j; j--) nop();
       PORTB = 0xFF;  // We end with all outputs high, all leds off
       interrupts();
@@ -151,7 +194,7 @@ byte PROGMEM *RunProgram(byte PROGMEM *pt) {
         
       default:  // Commands 0..4 are lighting of a number of LEDs from the same color
         if (FadeN) {
-          Fade((Command<<5) | Param);
+          Fade2((Command<<5) | Param);
           if (PINB!=0x1F) {
             byte i;
             for (i=255; i; i++) if (PINB==0x1f) break;
@@ -169,6 +212,7 @@ byte PROGMEM *RunProgram(byte PROGMEM *pt) {
           
           if (Param) Command=1;                    // Command is used as delay counter for Off(). For 'normal' colors, this is 1
           while (Command--) delayRealMicroseconds(Delay);
+          DDRB  = 0;
         } 
         break;
     }
@@ -194,38 +238,6 @@ void setup(void) {
 
 
 void loop(void) {
-/*
-  for (;;) {
-    Fade(R1234);
-    Fade(Y1234);
-    Fade(G1234);
-    Fade(B1234);
-    Fade(V1234);
-} 
-
-  for (;;) {
-    Fade(R34);
-    Fade(Y34);
-    Fade(G34);
-    Fade(B34);
-    Fade(V34);
-    Fade(R23);
-    Fade(Y23);
-    Fade(G23);
-    Fade(B23);
-    Fade(V23);
-    Fade(R12);
-    Fade(Y12);
-    Fade(G12);
-    Fade(B12);
-    Fade(V12);
-    Fade(R14);
-    Fade(Y14);
-    Fade(G14);
-    Fade(B14);
-    Fade(V14);
-  }
-*/
   HandleKeypresses();
   RunProgram(Main);
 }

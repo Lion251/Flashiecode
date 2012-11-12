@@ -14,14 +14,18 @@ enum { // this must correspond to the SubroutineList (at the end of the program)
 Sub(SetColorsDefault) {
   SetColorVal(R, 20),
   SetColorVal(Y, 20),
-  SetColorVal(G, 10),
+  SetColorVal(G, 20),
   SetColorVal(B, 20),
   SetColorVal(V, 20),
   End
 };
 
-Sub(Spiraal) {
+Sub(Spiraal4) {
   R1, R2, R3, R4, Y1, Y2, Y3, Y4, G1, G2, G3, G4, B1, B2, B3, B4, V1, V2, V3, V4, End
+};
+
+Sub(Spiraal) {
+  R1,Y1,G1,B1,V1,R2,Y2,G2,B2,V2,R3,Y3,G3,B3,V3,R4,Y4,G4,B4,V4,End
 };
 
 Sub(Spiraal3) {
@@ -125,32 +129,41 @@ Sub(Zigzag) {
  
 
 Sub(Main) {
+  FadeOff,
   Call(SetColorsDefault),
   
-  FadeOn,
-  SetSpeed(0),
-  Repeat(12),
-    Repeat(5),
-      Call(Stars),
+  Repeat(3),
+    SetSpeed(0),
+  
+    Repeat(14),
+      Repeat(4),
+        Call(Spiraal),
+      EndRep,
       SetSpeed(UP),
     EndRep,
-    Repeat(4),
+  
+    Repeat(8),
       Call(Stars),
       SetSpeed(DOWN),
     EndRep,
+    Repeat(8),
+      Call(Stars),
+      SetSpeed(UP),
+    EndRep,
+    
   EndRep,
-  
-  Repeat(4),
-    Call(Stars),
-    SetSpeed(UP),
-  EndRep,
-  
-  FadeOff,
-  
-  SetSpeed(5),
-  Repeat(5),
-    Call(Stars),
-    SetSpeed(UP),
+
+  FadeOn,
+  SetSpeed(0),
+  Repeat(12),
+//    Repeat(5),
+      Call(Stars),
+      SetSpeed(UP),
+//    EndRep,
+//    Repeat(4),
+      Call(Stars),
+      SetSpeed(DOWN),
+//    EndRep,
   EndRep,
   
 /*
@@ -203,7 +216,7 @@ SubroutineList { // Here, list all subroutines you might want to call. Maximum n
   Spiraal,
   Spiraal2,
   Spiraal3,
-  Stars,
+  Star2,
   Rainbow,
   Zigzag,
 };
