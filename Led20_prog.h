@@ -53,7 +53,6 @@ void Fade(byte b) {
       interrupts();
     }
   }
-  DDRB  = 0;  // All pins input (so we can read out switches)
 }
 
 
@@ -96,7 +95,17 @@ void Fade2(byte b) {
       interrupts();
     }
   }
-  DDRB  = 0;  // All pins input (so we can read out switches)
+}
+
+
+byte KeyPressed(void) {
+  DDRB   = 0;
+  PORTB  = 0xFF;
+  
+  for (byte i=255; i!=0; i--) {
+    if (PINB == 0x1F) return 0;
+  }
+  return 1;
 }
 
 
@@ -133,11 +142,12 @@ byte PROGMEM *RunProgram(byte PROGMEM *pt) {
   //Serial<<"pt:"<<pt-Main<<"\n";
   while (Command = pgm_read_byte(pt++)) {
     //Serial<<"Loop:"<<pt-Main<<"\n";
+    if (KeyPressed()) return NULL;
     Param   = Command & 31;
     Command >>=5;
     switch (Command) {
       case CALL:  // Call subroutine
-        if (!RunProgram((byte PROGMEM *)pgm_read_word(&Subroutines[Param]))) return NULL;
+        RunProgram((byte PROGMEM *)pgm_read_word(&Subroutines[Param]));
         break;
         
       case REPEAT:  // Repeat. Play a frame of ch bytes RepCnt times 
@@ -212,17 +222,11 @@ byte PROGMEM *RunProgram(byte PROGMEM *pt) {
           
           if (Param) Command=1;                    // Command is used as delay counter for Off(). For 'normal' colors, this is 1
           while (Command--) delayRealMicroseconds(Delay);
-          DDRB  = 0;
         } 
         break;
     }
   }
   return pt;  // pt now points 1 past the End/EndRep instruction
-}
-
-void HandleKeypresses(void) {
-  DDRB  = 0;
-  if (PINB!=0x1F) PowerOff();
 }
 
 void setup(void) {
@@ -238,8 +242,8 @@ void setup(void) {
 
 
 void loop(void) {
-  HandleKeypresses();
   RunProgram(Main);
+  if (KeyPressed()) PowerOff();
 }
 
 
