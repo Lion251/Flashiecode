@@ -147,7 +147,7 @@ byte PROGMEM *RunProgram(byte PROGMEM *pt) {
     Command >>=5;
     switch (Command) {
       case CALL:  // Call subroutine
-        RunProgram((byte PROGMEM *)pgm_read_word(&Subroutines[Param]));
+        RunProgram(Subroutines[Param]);
         break;
         
       case REPEAT:  // Repeat. Play a frame of ch bytes RepCnt times 
@@ -240,7 +240,7 @@ void setup(void) {
   PowerOff();    // Don't start until we press the button
 }
 
-
+extern byte PROGMEM Main[];
 void loop(void) {
   RunProgram(Main);
   if (KeyPressed()) PowerOff();

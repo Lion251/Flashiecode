@@ -87,6 +87,14 @@
 
 enum { R,Y,G,B,V,CALL,REPEAT,SPEED };  // For SetColorVal, and commands for the interpreter
 
+byte *Subroutines[32];
+
+class NewSub {
+public:
+//constructor
+  NewSub(byte PROGMEM *Function, char Pos) { Subroutines[Pos] = Function;  };
+};
+
 #define AVG_ONTIME               20
 #define TEXTDELAY                100
 #define SPACEDELAY               1
@@ -105,8 +113,10 @@ enum { SETCOLOR, CHAR };
 #define SetColorVal(CHAN, VAL)   Repeat(SETCOLOR), (CHAN<<5)|VAL
 #define Ch(CH)                   Repeat(CHAR), CH
 #define SetSpeed(X)              ((SPEED<<5) | (X))
-#define Sub(NAME)                byte PROGMEM NAME[] =
-#define SubroutineList           byte PROGMEM *Subroutines[] =
+#define Sub(NAME)                const int N##NAME=__COUNTER__;\
+                                 extern byte PROGMEM NAME[];\
+                                 static NewSub S##NAME(NAME, N##NAME);\
+                                 byte PROGMEM NAME[] =
 #define FadeOn                   SetSpeed(FADE)
 #define FadeOff                  SetSpeed(NOFADE)
 

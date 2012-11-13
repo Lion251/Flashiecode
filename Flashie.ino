@@ -1,21 +1,6 @@
 #include "Led20_defs.h" // must be the first line
+#include "Led20_prog.h" // must be the last line
 #include "Streaming.h"  // Needed for serial debugging on Arduino
-
-enum { // this must correspond to the SubroutineList (at the end of the program) line by line, with 'N' prefixes
-  NMain,
-  NSetColorsDefault,
-  NSpiraal,
-  NSpiraalReverse,
-  NSpiraalChase,
-  NSpiraalChaseReverse,
-  NSpiraal2,
-  NSpiraal2Reverse,
-  NSpiraal3,
-  NSpiraal3Reverse,
-  NSpiraal4,
-  NSpiraal4Reverse,
-  NStars,
-};
 
 Sub(SetColorsDefault) {
   SetColorVal(R, 20),
@@ -88,7 +73,7 @@ Sub(Main) {
   SetSpeed(0),
 
 // Spiraal
-  Repeat(14),
+  Repeat(18),
     Repeat(3),
       Call(Spiraal),
     EndRep,
@@ -104,7 +89,7 @@ Sub(Main) {
     SetSpeed(UP),
   EndRep,
   
-  Repeat(14),
+  Repeat(18),
     Repeat(3),
       Call(SpiraalReverse),
     EndRep,
@@ -218,21 +203,3 @@ Sub(Main) {
   End
 };
 
-
-SubroutineList { // Here, list all subroutines you might want to call. Maximum number is 32!
-  Main,
-  SetColorsDefault,
-  Spiraal,
-  SpiraalReverse,
-  SpiraalChase,
-  SpiraalChaseReverse,
-  Spiraal2,
-  Spiraal2Reverse,
-  Spiraal3,
-  Spiraal3Reverse,
-  Spiraal4,
-  Spiraal4Reverse,
-  Stars,
-};
-
-#include "Led20_prog.h" // must be the last line
