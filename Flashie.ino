@@ -6,8 +6,12 @@ enum { // this must correspond to the SubroutineList (at the end of the program)
   NSetColorsDefault,
   NSpiraal,
   NSpiraalReverse,
+  NSpiraalChase,
+  NSpiraalChaseReverse,
   NSpiraal2,
   NSpiraal2Reverse,
+  NSpiraal3,
+  NSpiraal3Reverse,
   NSpiraal4,
   NSpiraal4Reverse,
   NStars,
@@ -31,6 +35,15 @@ Sub(SpiraalReverse) {
 };
 
 
+Sub(SpiraalChase) {
+  R14,Y14,G14,B14,V14,R12,Y12,G12,B12,V12,R23,Y23,G23,B23,V23,R34,Y34,G34,B34,V34,End
+};
+
+Sub(SpiraalChaseReverse) {
+  V34,B34,G34,Y34,R34,V23,B23,G23,Y23,R23,V12,B12,G12,Y12,R12,V14,B14,G14,Y14,R14,End
+};
+
+
 Sub(Spiraal2) {
   R13,Y13,G13,B13,V13,R24,Y24,G24,B24,V24,End
 };
@@ -38,6 +51,15 @@ Sub(Spiraal2) {
 Sub(Spiraal2Reverse) {
   V24,B24,G24,Y24,R24,V13,B13,G13,Y13,R13,End
 };
+
+Sub(Spiraal3) {
+  R134,Y134,G134,B134,V134,R124,Y124,G124,B124,V124,R123,Y123,G123,B123,V123,R234,Y234,G234,B234,V234,End
+};
+
+Sub(Spiraal3Reverse) {
+  V234,B234,G234,Y234,R234,V123,B123,G123,Y123,R123,V124,B124,G124,Y124,R124,V134,B134,G134,Y134,R134,End
+};
+
 
 Sub(Spiraal4) {
   R1234,Y1234,G1234,B1234,V1234,End
@@ -64,7 +86,8 @@ Sub(Main) {
   Call(SetColorsDefault),
   
   SetSpeed(0),
-  
+
+// Spiraal
   Repeat(14),
     Repeat(3),
       Call(Spiraal),
@@ -88,7 +111,31 @@ Sub(Main) {
     SetSpeed(DOWN),
   EndRep,
   
-    
+// SpiraalChaseReverse    
+  Repeat(14),
+    Repeat(3),
+      Call(SpiraalChaseReverse),
+    EndRep,
+    SetSpeed(UP),
+  EndRep,
+  
+  Repeat(8),
+    Call(Stars),
+    SetSpeed(DOWN),
+  EndRep,
+  Repeat(8),
+    Call(Stars),
+    SetSpeed(UP),
+  EndRep,
+  
+  Repeat(14),
+    Repeat(3),
+      Call(SpiraalChase),
+    EndRep,
+    SetSpeed(DOWN),
+  EndRep,
+  
+// Spiraal2    
   Repeat(14),
     Repeat(6),
       Call(Spiraal2),
@@ -112,7 +159,31 @@ Sub(Main) {
     SetSpeed(DOWN),
   EndRep,
   
-    
+// Spiraal3Reverse    
+  Repeat(14),
+    Repeat(3),
+      Call(Spiraal3Reverse),
+    EndRep,
+    SetSpeed(UP),
+  EndRep,
+  
+  Repeat(8),
+    Call(Stars),
+    SetSpeed(DOWN),
+  EndRep,
+  Repeat(8),
+    Call(Stars),
+    SetSpeed(UP),
+  EndRep,
+  
+  Repeat(14),
+    Repeat(3),
+      Call(Spiraal3),
+    EndRep,
+    SetSpeed(DOWN),
+  EndRep,
+  
+// Spiraal4    
   Repeat(14),
     Repeat(12),
       Call(Spiraal4),
@@ -136,7 +207,7 @@ Sub(Main) {
     SetSpeed(DOWN),
   EndRep,
   
-    
+// Fading stars    
   FadeOn,
   SetSpeed(4),
   Repeat(12),
@@ -153,8 +224,12 @@ SubroutineList { // Here, list all subroutines you might want to call. Maximum n
   SetColorsDefault,
   Spiraal,
   SpiraalReverse,
+  SpiraalChase,
+  SpiraalChaseReverse,
   Spiraal2,
   Spiraal2Reverse,
+  Spiraal3,
+  Spiraal3Reverse,
   Spiraal4,
   Spiraal4Reverse,
   Stars,
