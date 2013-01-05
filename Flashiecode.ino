@@ -1,6 +1,6 @@
 #include "Led20_defs.h" // must be the first line
 #include "Led20_prog.h" // must be the last line
-#include "Streaming.h"  // Needed for serial debugging on Arduino
+//#include "Streaming.h"  // Needed for serial debugging on Arduino
 
 Sub(SetColorsDefault) {
   SetColorVal(R, 20),
