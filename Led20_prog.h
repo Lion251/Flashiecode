@@ -222,6 +222,7 @@ byte PROGMEM *RunProgram(byte PROGMEM *pt) {
           
           if (Param) Command=1;                    // Command is used as delay counter for Off(). For 'normal' colors, this is 1
           while (Command--) delayRealMicroseconds(Delay);
+          PORTB  = 0xFF;
         } 
         break;
     }
@@ -243,7 +244,8 @@ void setup(void) {
 extern byte PROGMEM Main[];
 void loop(void) {
   RunProgram(Main);
-  if (KeyPressed()) PowerOff();
+//  if (KeyPressed()) PowerOff();
+  PowerOff();
 }
 
 
