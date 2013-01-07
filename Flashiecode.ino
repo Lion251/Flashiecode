@@ -66,22 +66,21 @@ Sub(Stars) {
   End
 };
 
+Sub(Test) {
+  R1,R2,R3,R4,Y4,G4,B4,V4,V3,V2,V1,B1,G1,Y1, 
+  End
+};
+
+
 Sub(Main) {
   FadeOn,
   Call(SetColorsDefault),
-  SetSpeed(16),
-  Repeat(3),
-    Call(Spiraal),
-  EndRep,
-  
-  FadeOff,
-  SetSpeed(27),
-  _H,_A,_L,_L,_O,_,_D,_Y,_L,_A,_N,_,_,_Z,_I,_N,_G,_,_S,_I,_N,_T,_E,_R,_K,_L,_A,_A,_S,_,_K,_A,_P,_O,_E,_N,_T,_J,_E,
-  
-  SetSpeed(20),
-  Repeat(10),
+  SetSpeed(9),
+  Repeat(15),
     Call(Stars),
+    SetSpeed(UP),
   EndRep,
+  
   End
 };
 

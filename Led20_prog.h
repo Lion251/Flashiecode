@@ -28,27 +28,26 @@ void Fade(byte b) {
   port3 = port2;
   port2 = port1;
   port1 = port0;
-  port0 = 1;
-  port0 <<= (b>>5);
+  port0 = 1 << (b>>5);
   ddr3  = ddr2;
   ddr2  = ddr1;
   ddr1  = ddr0;
   ddr0  = (b & 0x1F) | port0;
-  for (byte i=0; i<32; i++) {
-    for (byte k=18-SpeedVal; k; k--) {
+  for (byte i=0; i<33-SpeedVal; i++) {
+    for (byte k=18-(SpeedVal>>1); k; k--) {
       noInterrupts();
       DDRB  = ddr0;
       PORTB = port0;
-      for (byte j=i+1; j; j--) nop();
+      for (byte j=i+1; j; j--) nop();    // 1..34-SpeedVal
       DDRB  = ddr1;
       PORTB = port1;
-      for (byte j=i+i+33; j; j--) nop();
+      for (byte j=i+i+(34-SpeedVal); j; j--) nop();  // 34-SpeedVal .. 100-3*SpeedVal
       DDRB  = ddr2;
       PORTB = port2;
-      for (byte j=97-i-i; j; j--) nop();
+      for (byte j=100-SpeedVal-SpeedVal-SpeedVal-i-i; j; j--) nop();
       DDRB  = ddr3;
       PORTB = port3;
-      for (byte j=33-i; j; j--) nop();
+      for (byte j=34-SpeedVal-i; j; j--) nop();
       PORTB = 0xFF;  // We end with all outputs high, all leds off
       interrupts();
     }
@@ -70,27 +69,27 @@ void Fade2(byte b) {
   ddr2  = ddr1;
   ddr1  = ddr0;
   ddr0  = (b & 0x1F) | port0;
-  for (byte i=0; i<32; i++) {
-    for (byte k=18-SpeedVal; k; k--) {
+  for (byte i=0; i<33-SpeedVal; i++) {
+    for (byte k=18-(SpeedVal>>1); k; k--) {
       noInterrupts();
       DDRB  = ddr0;
       PORTB = port0;
       for (byte j=i+1; j; j--) nop();
       DDRB  = ddr1;
       PORTB = port1;
-      for (byte j=i+i+33; j; j--) nop();
+      for (byte j=i+i+33-SpeedVal; j; j--) nop();
       DDRB  = ddr2;
       PORTB = port2;
-      for (byte j=100; j; j--) nop();
+      for (byte j=100-SpeedVal-SpeedVal-SpeedVal; j; j--) nop();
       DDRB  = ddr3;
       PORTB = port3;
-      for (byte j=100; j; j--) nop();
+      for (byte j=100-SpeedVal-SpeedVal-SpeedVal; j; j--) nop();
       DDRB  = ddr4;
       PORTB = port4;
-      for (byte j=97-i-i; j; j--) nop();
+      for (byte j=100-SpeedVal-SpeedVal-i-i; j; j--) nop();
       DDRB  = ddr5;
       PORTB = port5;
-      for (byte j=33-i; j; j--) nop();
+      for (byte j=34-SpeedVal-i; j; j--) nop();
       PORTB = 0xFF;  // We end with all outputs high, all leds off
       interrupts();
     }
@@ -244,8 +243,7 @@ void setup(void) {
 extern const byte PROGMEM Main[];
 void loop(void) {
   RunProgram(Main);
-//  if (KeyPressed()) PowerOff();
-  PowerOff();
+  if (KeyPressed()) PowerOff();
 }
 
 
