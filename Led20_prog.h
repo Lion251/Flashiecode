@@ -3,7 +3,7 @@
 #include "avr/power.h"
 #include "avr/sleep.h"
 
-unsigned PROGMEM DelayTime[32] = {
+unsigned const PROGMEM DelayTime[32] = {
   2560, 2153, 1810, 1522, 1280, 1076,  905,  761, 
    640,  538,  453,  381,  320,  269,  226,  190,
    160,  135,  113,   95,   80,   67,   57,   48,
@@ -136,7 +136,7 @@ void PowerOff(void) {
   
 }
 
-byte PROGMEM *RunProgram(byte PROGMEM *pt) {
+byte const PROGMEM *RunProgram(byte const PROGMEM *pt) {
   byte  Command, Param;
   
   //Serial<<"pt:"<<pt-Main<<"\n";
@@ -176,7 +176,7 @@ byte PROGMEM *RunProgram(byte PROGMEM *pt) {
               break;
               
             default: // Normally, we repeat Param times
-              { byte PROGMEM *NewPt;
+              { byte const PROGMEM *NewPt;
                 do {
                   NewPt = RunProgram(pt); 
                   if (!NewPt) return NULL;
@@ -240,7 +240,7 @@ void setup(void) {
   PowerOff();    // Don't start until we press the button
 }
 
-extern byte PROGMEM Main[];
+extern byte const PROGMEM Main[];
 void loop(void) {
   RunProgram(Main);
   if (KeyPressed()) PowerOff();
