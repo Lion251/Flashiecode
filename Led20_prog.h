@@ -24,6 +24,33 @@ byte ddr0,ddr1,ddr2,ddr3,ddr4,ddr5,port0,port1,port2,port3,port4,port5;
 #define nop() __asm__ __volatile__ ("nop")
 
 
+void Fade3(byte b) {
+  port2 = port1;
+  port1 = port0;
+  port0 = 1;
+  port0 <<= (b>>5);
+  ddr2  = ddr1;
+  ddr1  = ddr0;
+  ddr0  = (b & 0x1F) | port0;
+  for (byte i=0; i<127; i++) {
+    for (byte k=18-SpeedVal; k; k--) {
+      noInterrupts();
+      DDRB  = ddr0;
+      PORTB = port0;
+      for (byte j=i+1; j; j--) nop();
+      DDRB  = ddr1;
+      PORTB = port1;
+      for (byte j=128; j; j--) nop();
+      DDRB  = ddr2;
+      PORTB = port2;
+      for (byte j=128-i; j; j--) nop();
+      PORTB = 0xFF;  // We end with all outputs high, all leds off
+      interrupts();
+    }
+  }
+}
+
+
 void Fade(byte b) {
   port3 = port2;
   port2 = port1;
@@ -204,7 +231,7 @@ byte const PROGMEM *RunProgram(byte const PROGMEM *pt) {
         
       default:  // Commands 0..4 are lighting of a number of LEDs from the same color
         if (FadeN) {
-          Fade2((Command<<5) | Param);
+          Fade3((Command<<5) | Param);
           if (PINB!=0x1F) {
             byte i;
             for (i=255; i; i++) if (PINB==0x1f) break;
